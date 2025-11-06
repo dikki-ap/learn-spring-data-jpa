@@ -70,6 +70,7 @@ public class ProductRepositoryTest {
     @Test
     void testFindProductByCategoryNameSortByPrice(){
         Sort sort = Sort.by(Sort.Order.asc("price")); // Membuat filter sort ASC berdasarkan "price"
+        Sort multiSort = Sort.by(Sort.Order.asc("price"), Sort.Order.asc("id")); // Multi Sorting
         List<Product> electronicProducts = productRepository.findAllByCategory_Name("Small Electronic", sort);
 
         Assertions.assertEquals(2, electronicProducts.size());
