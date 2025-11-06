@@ -18,7 +18,7 @@ public class CategoryRepositoryTest {
     @Test
     void testCreateCategory(){
         Category category = new Category();
-        category.setName("Electronic"); // Id tidak perlu dibuat karena auto generated
+        category.setName("Books"); // Id tidak perlu dibuat karena auto generated
 
         // Method "save(entity)" berfungsi untuk CREATE dan UPDATE
         categoryRepository.save(category); // Langsung save ke Database
