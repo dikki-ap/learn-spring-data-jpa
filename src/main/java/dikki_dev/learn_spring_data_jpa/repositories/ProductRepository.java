@@ -2,18 +2,21 @@ package dikki_dev.learn_spring_data_jpa.repositories;
 
 import dikki_dev.learn_spring_data_jpa.entities.Category;
 import dikki_dev.learn_spring_data_jpa.entities.Product;
+import jakarta.persistence.LockModeType;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Repository
@@ -72,4 +75,21 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Stream<Product> streamAllByCategory(Category category);
 
     Slice<Product> findAllByCategory(Category category, Pageable pageable); // Return "Slice<T>" untuk bisa mendapatkan informasi apakah ada "Next Page" atau "Previous Page"
+
+    /*
+        -- @Lock Annotation for "Pessimistic Locking" --
+        - Mengunci row data ketika dibaca/diakses oleh satu transaksi
+        - Transaksi lain yang mencoba mengakses data yang sama akan menunggu sampai lock dilepas / error kalau timeout
+
+        1. PESSIMISTIC_READ             : Membaca data dengan read lock. Tidak membolehkan row diupdate oleh transaksi lain, tapi transaksi lain masih bisa baca.
+        2. PESSIMISTIC_WRITE            : Membaca data dengan write lock. Tidak ada transaksi lain yang bisa baca atau update row yang sama.
+        3. PESSIMISTIC_FORCE_INCREMENT  : Sama seperti PESSIMISTIC_WRITE, tapi juga memaksa versi entity (@Version) untuk di-increment.
+     */
+    @Lock(LockModeType.PESSIMISTIC_READ)
+    Optional<Product> findByName(String name); // Untuk mencegah update data oleh transaksi lain, tetapi masih memperbolehkan read yang lain
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    Optional<Product> findById(Long id); // Paling ketat. Mencegah transaksi lain untuk baca atau tulis data yang sama.
+
+
 }
