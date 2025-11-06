@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -40,4 +41,17 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     // Jika nativeQuery = true maka bisa menggunakan QUERY DB yang asli
     @Query(value = "select p from Product p where p.name like :name or p.category.name like :name")
     List<Product> searchProductByName(@Param("name")String name);
+
+    /*
+        -- @Modifying Annotation --
+        - Berfungsi untuk "@Query" Annotation yang NOT READ ONLY (UPDATE / DELETE)
+        - Wajib menambahkan "@Modifying" agar Spring tau bahwa ini NOT READ ONLY
+     */
+    @Modifying
+    @Query(value = "delete from Product p where p.name = :name")
+    int deleteProductUsingName(@Param("name") String name);
+
+    @Modifying
+    @Query(value = "update from Product p set p.price = 0 where p.id = :id")
+    int updateProductPriceToZero(@Param("price") Long id);
 }
