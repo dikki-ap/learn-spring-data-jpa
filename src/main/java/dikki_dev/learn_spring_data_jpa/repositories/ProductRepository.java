@@ -1,6 +1,7 @@
 package dikki_dev.learn_spring_data_jpa.repositories;
 
 import dikki_dev.learn_spring_data_jpa.entities.Product;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,4 +26,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllByCategory_Name(String name, Sort sort); // Menambahkan "Sort" di parameter terakhir agar bisa Sorting
 //    List<Product> findAllByCategory_Name(String name, Pageable pageable); // Menambahkan Pagination, sudah include juga dengan Sorting
     Page<Product> findAllByCategory_Name(String name, Pageable pageable); // MENGGANTI TIPE DATA "Page<T>", agar bisa mendapatkan informasi total data dan total Page
+
+    @Transactional // Khusus untuk operation YANG TIDAK READ ONLY, tambahkan @Transactional secara mandiri, karena JpaRepository secara default @Transactional(readonly = true)
+    int deleteByName(String name); // Membuat Method "DELETE" berdasarkan "name" dan mengembalikan integer untuk melihat berapa record affected
 }
