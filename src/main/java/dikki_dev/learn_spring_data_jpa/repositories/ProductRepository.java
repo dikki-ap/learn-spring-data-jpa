@@ -1,6 +1,7 @@
 package dikki_dev.learn_spring_data_jpa.repositories;
 
 import dikki_dev.learn_spring_data_jpa.entities.Product;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -21,4 +22,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
      */
     List<Product> findAllByCategory_Name(String name);
     List<Product> findAllByCategory_Name(String name, Sort sort); // Menambahkan "Sort" di parameter terakhir agar bisa Sorting
+    List<Product> findAllByCategory_Name(String name, Pageable pageable); // Menambahkan Pagination, sudah include juga dengan Sorting
 }

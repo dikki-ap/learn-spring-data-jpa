@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
@@ -76,5 +78,53 @@ public class ProductRepositoryTest {
         Assertions.assertEquals(2, electronicProducts.size());
         Assertions.assertEquals("Samsung S24 Ultra", electronicProducts.get(0).getName());
         Assertions.assertEquals("Samsung S25 Ultra", electronicProducts.get(1).getName());
+    }
+
+    @Test
+    void testFindProductByCategoryNameSortByPagination(){
+        // PageIndex 0, PageSize 2 (Total Data 5)
+        Pageable paginationConfig = PageRequest.of(
+                0,
+                2,
+                Sort.by(
+                        Sort.Order.asc("price"),
+                        Sort.Order.asc("id")
+                )
+        );
+
+        List<Product> electronicProductsPage0 = productRepository.findAllByCategory_Name("Small Electronic", paginationConfig);
+
+        Assertions.assertEquals(2, electronicProductsPage0.size());
+        Assertions.assertEquals("Samsung S24 Ultra", electronicProductsPage0.get(0).getName());
+        Assertions.assertEquals("Samsung S25 Ultra", electronicProductsPage0.get(1).getName());
+
+        // PageIndex 1, PageSize 2 (Total Data 5)
+        paginationConfig = PageRequest.of(
+                1,
+                2,
+                Sort.by(
+                        Sort.Order.asc("price"),
+                        Sort.Order.asc("id")
+                )
+        );
+        List<Product> electronicProductsPage1 = productRepository.findAllByCategory_Name("Small Electronic", paginationConfig);
+
+        Assertions.assertEquals(2, electronicProductsPage1.size());
+        Assertions.assertEquals("Samsung S23", electronicProductsPage1.get(0).getName());
+        Assertions.assertEquals("Samsung S23 Plus", electronicProductsPage1.get(1).getName());
+
+        // PageIndex 2, PageSize 2 (Total Data 5)
+        paginationConfig = PageRequest.of(
+                2,
+                2,
+                Sort.by(
+                        Sort.Order.asc("price"),
+                        Sort.Order.asc("id")
+                )
+        );
+        List<Product> electronicProductsPage2 = productRepository.findAllByCategory_Name("Small Electronic", paginationConfig);
+
+        Assertions.assertEquals(1, electronicProductsPage2.size());
+        Assertions.assertEquals("Samsung S23 Ultra", electronicProductsPage2.get(0).getName());
     }
 }
