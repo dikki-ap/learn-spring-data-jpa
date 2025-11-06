@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -29,4 +30,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Transactional // Khusus untuk operation YANG TIDAK READ ONLY, tambahkan @Transactional secara mandiri, karena JpaRepository secara default @Transactional(readonly = true)
     int deleteByName(String name); // Membuat Method "DELETE" berdasarkan "name" dan mengembalikan integer untuk melihat berapa record affected
+
+    // Buat JPA Repository dengan nama yang sama seperti "NamedQuery" agar bisa menggunakan hal tersebut
+    List<Product> searchProductUsingName(@Param("name") String name);
 }

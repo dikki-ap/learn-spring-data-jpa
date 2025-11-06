@@ -179,4 +179,11 @@ public class ProductRepositoryTest {
         Assertions.assertEquals(1, electronicProductsPage2.getContent().size());
         Assertions.assertEquals("Samsung S23 Ultra", electronicProductsPage2.getContent().get(0).getName());
     }
+
+    @Test
+    void testSearchProductByNameUsingNamedQuery(){
+        List<Product> samsungProducts = productRepository.searchProductUsingName("Samsung S23 Ultra");
+        Assertions.assertEquals(1, samsungProducts.size());
+        Assertions.assertEquals("Samsung S23 Ultra", samsungProducts.get(0).getName());
+    }
 }
