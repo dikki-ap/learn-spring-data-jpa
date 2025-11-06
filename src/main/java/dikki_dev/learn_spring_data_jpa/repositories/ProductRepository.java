@@ -1,5 +1,6 @@
 package dikki_dev.learn_spring_data_jpa.repositories;
 
+import dikki_dev.learn_spring_data_jpa.entities.Category;
 import dikki_dev.learn_spring_data_jpa.entities.Product;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
@@ -54,4 +56,17 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Modifying
     @Query(value = "update from Product p set p.price = 0 where p.id = :id")
     int updateProductPriceToZero(@Param("price") Long id);
+
+
+    /*
+        -- "Lazy" Stream<T> for Spring Data JPA --
+        - Jika kita menggunakan method "findAll....()" otomatis data akan di load ke dalam memory
+        - Jika data sangat banyak, akan ada Exception OutOfMemory
+        - Kita bisa menggunakan Stream sebagai solusi
+        - Stream ini bersifat "Lazy" jadi semuanya tidak akan di load secara bersamaan
+        - Melainkan di load saat digunakan, dan load nya juga sedikit demi sedikit
+        - WAJIB RETURN "Stream<T>"
+        - WAJIB MENGGUNAKAN PREFIX "streamAll....()"
+     */
+    Stream<Product> streamAllByCategory(Category category);
 }
