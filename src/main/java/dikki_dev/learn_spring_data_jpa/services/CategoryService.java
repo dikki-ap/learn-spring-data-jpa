@@ -5,6 +5,10 @@ import dikki_dev.learn_spring_data_jpa.repositories.CategoryRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionOperations;
 
 @Service
@@ -20,6 +24,16 @@ public class CategoryService {
      */
     @Autowired
     private TransactionOperations transactionOperations;
+
+    /*
+    -- Manual Programmatic Transaction (Platform Transaction Manager) --
+    - Untuk kasus sederhana dan MANUAL jika kita perlu "ASYNC" Transactional
+    - Karena @Transactional berjalan secara SYNC
+     */
+    @Autowired
+    private PlatformTransactionManager platformTransactionManager;
+
+
 
     /*
         -- @Transactional Annotation --
@@ -77,6 +91,8 @@ public class CategoryService {
         throw new RuntimeException("Error, Rollback please!");
     }
 
+
+    // Manual Transaction for ASYNC Method
     public void createWithTransactionOperations(){
         transactionOperations.executeWithoutResult((status) -> {
             for (int i = 0; i < 5; i++) {
@@ -86,5 +102,39 @@ public class CategoryService {
             }
             error();
         });
+    }
+
+
+    // "Literally" Manual Transaction
+    public void createWithPlatformTransactionManager(){
+        DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
+
+        // Set manual configuration
+        defaultTransactionDefinition.setTimeout(10);
+        defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+
+        // Get transaction status from existing transaction
+        TransactionStatus transactionStatus = platformTransactionManager.getTransaction(defaultTransactionDefinition);
+
+        try{
+            for (int i = 0; i < 5; i++) {
+                Category category = new Category();
+                category.setName("Category-" + i);
+                categoryRepository.save(category);
+            }
+
+            error(); // Call Exception
+
+            // Manual Commit
+            platformTransactionManager.commit(transactionStatus);
+        }catch (Throwable throwable){
+
+            // Manual Rollback
+            platformTransactionManager.rollback(transactionStatus);
+
+            // Throw Exception
+            throw  throwable;
+        }
+
     }
 }

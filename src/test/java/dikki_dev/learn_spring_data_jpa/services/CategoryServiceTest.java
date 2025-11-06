@@ -37,4 +37,12 @@ public class CategoryServiceTest {
             categoryService.createWithTransactionOperations();
         });
     }
+
+    @Test
+    void testProgrammaticTransactionWithPlatformTransactionManager(){
+        Assertions.assertThrows(RuntimeException.class, () -> {
+            // Menjalankan Transactional di proses ASYNC dengan Transaction Operations
+            categoryService.createWithPlatformTransactionManager();
+        });
+    }
 }
