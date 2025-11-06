@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -64,5 +65,15 @@ public class ProductRepositoryTest {
         List<Product> booksProducts = productRepository.findAllByCategory_Name("Books");
         Assertions.assertEquals(1, booksProducts.size());
         Assertions.assertEquals("Domain Driven Design Book", booksProducts.get(0).getName());
+    }
+
+    @Test
+    void testFindProductByCategoryNameSortByPrice(){
+        Sort sort = Sort.by(Sort.Order.asc("price")); // Membuat filter sort ASC berdasarkan "price"
+        List<Product> electronicProducts = productRepository.findAllByCategory_Name("Small Electronic", sort);
+
+        Assertions.assertEquals(2, electronicProducts.size());
+        Assertions.assertEquals("Samsung S24 Ultra", electronicProducts.get(0).getName());
+        Assertions.assertEquals("Samsung S25 Ultra", electronicProducts.get(1).getName());
     }
 }
