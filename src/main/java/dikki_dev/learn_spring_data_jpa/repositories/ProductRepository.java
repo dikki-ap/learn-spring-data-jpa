@@ -5,6 +5,7 @@ import dikki_dev.learn_spring_data_jpa.entities.Product;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -69,4 +70,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
         - WAJIB MENGGUNAKAN PREFIX "streamAll....()"
      */
     Stream<Product> streamAllByCategory(Category category);
+
+    Slice<Product> findAllByCategory(Category category, Pageable pageable); // Return "Slice<T>" untuk bisa mendapatkan informasi apakah ada "Next Page" atau "Previous Page"
 }
