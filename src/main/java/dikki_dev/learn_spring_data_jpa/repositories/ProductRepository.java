@@ -8,10 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -20,7 +18,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long> {
+// Menambahkan "JpaSpecificationExecutor<T>" untuk membuat JPA Query secara Advance untuk menggunakan "Specification<T>"
+public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
 
     // Product memiliki relasi ke Category (1 Category to M Product)
     // Jika ada hubungan relasi, dan ingin mengakses field "Category" dengan file "name" bisa gunakan tanda "_" (underscore)
@@ -53,13 +52,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
         - Berfungsi untuk "@Query" Annotation yang NOT READ ONLY (UPDATE / DELETE)
         - Wajib menambahkan "@Modifying" agar Spring tau bahwa ini NOT READ ONLY
      */
-    @Modifying
-    @Query(value = "delete from Product p where p.name = :name")
-    int deleteProductUsingName(@Param("name") String name);
-
-    @Modifying
-    @Query(value = "update from Product p set p.price = 0 where p.id = :id")
-    int updateProductPriceToZero(@Param("price") Long id);
+//    @Modifying
+//    @Query(value = "delete from Product p where p.name = :name")
+//    int deleteProductUsingName(@Param("name") String name);
+//
+//    @Modifying
+//    @Query(value = "update from Product p set p.price = 0 where p.id = :id")
+//    int updateProductPriceToZero(@Param("price") Long id);
 
 
     /*
@@ -92,4 +91,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findById(Long id); // Paling ketat. Mencegah transaksi lain untuk baca atau tulis data yang sama.
 
 
+    // Implementasi "Specification<T>"
+    Page<Product> findAll(Specification<Product> spec, Pageable pageable);
 }
