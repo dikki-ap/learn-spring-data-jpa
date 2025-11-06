@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -33,4 +34,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // Buat JPA Repository dengan nama yang sama seperti "NamedQuery" agar bisa menggunakan hal tersebut
     List<Product> searchProductUsingName(@Param("name") String name);
+
+    // Membuat method dengan "@Query" Annotation dengan JPA QL
+    // Di "@Query" Annotation property "nativeQuery" defaultnya false, yang artinya akan menggunakan JPA QL
+    // Jika nativeQuery = true maka bisa menggunakan QUERY DB yang asli
+    @Query(value = "select p from Product p where p.name like :name or p.category.name like :name")
+    List<Product> searchProductByName(@Param("name")String name);
 }
