@@ -3,6 +3,7 @@ package dikki_dev.learn_spring_data_jpa.repositories;
 import dikki_dev.learn_spring_data_jpa.entities.Category;
 import dikki_dev.learn_spring_data_jpa.entities.Product;
 import dikki_dev.learn_spring_data_jpa.interfaces.SimpleProduct;
+import dikki_dev.learn_spring_data_jpa.records.SimpleProductRecord;
 import jakarta.persistence.LockModeType;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -99,4 +100,5 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     // Spring bisa otomatis mengetahui jika return valuenya adalah "Interface" dengan "Getter Method" ia akan mencari sesuai dengan jumlah "Getter Method" sesuai dengan PropertyName nya
     // Contohnya disini mencari dengan "Name" dan "Price"
     List<SimpleProduct> findAllByNameLike(String name); // Returnnya adalah List<Interface>, di dalam Interface ada 2 "Getter Method", dan nantinya querynya hanya "SELECT Name, Price ....." bukan "SELECT *"
+    List<SimpleProductRecord> findAllById(Long id); // LEBIH BAIK MENGGUNAKAN "RECORD" karena tidak memerlukan Proxy (Reflection)
 }
