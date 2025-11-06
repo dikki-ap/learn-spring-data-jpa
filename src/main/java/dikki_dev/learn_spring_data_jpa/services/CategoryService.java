@@ -5,12 +5,21 @@ import dikki_dev.learn_spring_data_jpa.repositories.CategoryRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionOperations;
 
 @Service
 public class CategoryService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    /*
+    -- Programmatic Transaction (Transaction Operations) --
+    - Untuk kasus sederhana jika kita perlu "ASYNC" Transactional
+    - Karena @Transactional berjalan secara SYNC
+     */
+    @Autowired
+    private TransactionOperations transactionOperations;
 
     /*
         -- @Transactional Annotation --
@@ -62,5 +71,20 @@ public class CategoryService {
 
     public void testCreate(){
         create();
+    }
+
+    public void error(){
+        throw new RuntimeException("Error, Rollback please!");
+    }
+
+    public void createWithTransactionOperations(){
+        transactionOperations.executeWithoutResult((status) -> {
+            for (int i = 0; i < 5; i++) {
+                Category category = new Category();
+                category.setName("Category-" + i);
+                categoryRepository.save(category);
+            }
+            error();
+        });
     }
 }

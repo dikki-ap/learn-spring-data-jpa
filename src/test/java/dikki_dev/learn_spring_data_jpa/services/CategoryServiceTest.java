@@ -29,4 +29,12 @@ public class CategoryServiceTest {
             categoryService.testCreate();
         });
     }
+
+    @Test
+    void testProgrammaticTransactionWithTransactionOperations(){
+        Assertions.assertThrows(RuntimeException.class, () -> {
+            // Menjalankan Transactional di proses ASYNC dengan Transaction Operations
+            categoryService.createWithTransactionOperations();
+        });
+    }
 }
