@@ -101,4 +101,10 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     // Contohnya disini mencari dengan "Name" dan "Price"
     List<SimpleProduct> findAllByNameLike(String name); // Returnnya adalah List<Interface>, di dalam Interface ada 2 "Getter Method", dan nantinya querynya hanya "SELECT Name, Price ....." bukan "SELECT *"
     List<SimpleProductRecord> findAllById(Long id); // LEBIH BAIK MENGGUNAKAN "RECORD" karena tidak memerlukan Proxy (Reflection)
+
+    // Ada 2 Method, dengan return value berbeda, tetapi param sama
+    // 1. List<SimpleProduct> findAllByNameLike(String name);
+    // 2. List<SimpleProductRecord> findAllByNameLike(String name);
+    // Jika hal seperti ini terjadi, buatlah Generic Type seperti ini, khususnya untuk implementasi "Java Record" jika anda memiliki banyak Java Record
+    <T> List<T> findAllByNameLike(String name, Class<T> tClass);
 }
