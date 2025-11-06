@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+import java.util.Optional;
+
 @SpringBootTest
 public class CategoryRepositoryTest {
 
@@ -31,5 +34,19 @@ public class CategoryRepositoryTest {
         categoryRepository.save(category); // Update, dan save ke Database
         Assertions.assertNotNull(category.getId());
         Assertions.assertEquals("Small Electronic", category.getName());
+    }
+
+    @Test
+    void testQueryMethodFindFirstByNameEquals(){
+        Optional<Category> category = categoryRepository.findFirstByNameEquals("Small Electronic");
+        Assertions.assertNotNull(category.get().getId());
+        Assertions.assertEquals(1, category.get().getId());
+    }
+
+    @Test
+    void testQueryMethodFindFirstByNameLike(){
+        List<Category> category = categoryRepository.findAllByNameLike("%Category%");
+        Assertions.assertNotNull(category);
+        Assertions.assertEquals("Category-0", category.getFirst().getName());
     }
 }
